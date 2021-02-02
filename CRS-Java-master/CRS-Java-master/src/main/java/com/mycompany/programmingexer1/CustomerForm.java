@@ -350,7 +350,7 @@ public class CustomerForm extends javax.swing.JFrame {
                 cId.setText(String.valueOf(id + 1));
             } else {
                 cId.setText(String.valueOf(deletedIDs.get(0)));
-            }/*
+            }
             //Resets fields
             cName.setText("");
             cAddress.setText("");
@@ -358,8 +358,8 @@ public class CustomerForm extends javax.swing.JFrame {
             cEmail.setText("");
             cBirthdate.setText("");
             cGender.setSelectedItem("Male");
-            */
-            //messagebox("New customer has been added.", "Saved");
+            
+            messagebox("New customer has been added.", "Saved");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -424,33 +424,32 @@ public class CustomerForm extends javax.swing.JFrame {
         int rows = jTable1.getSelectedRowCount();
         if (rows > 0) {//Checks if rows are selected
             DefaultTableModel tblmodel = (DefaultTableModel) jTable1.getModel();//Gets table object
+            
             for (int i = 0; i < rows; i++) {//Iterates for each selected row
                 int IDNo = Integer.valueOf(String.valueOf(jTable1.getValueAt(jTable1.getSelectedRow(), 0)));//Sets IDNo to ID of current row
                 
                 tblmodel.removeRow(jTable1.getSelectedRow());//Removes the row
                 
-                deletedIDs.add(IDNo);
+                deletedIDs.add(IDNo);//Adds deleted ID to deletedIDs
 
+                //Sets all values to null for the selected customer in cust array
                 for (int y = 0; y < 7; y++) {
                     cust[IDNo - 1][y] = null;
                 }
-
-                Collections.sort(deletedIDs);
-                cId.setText(String.valueOf(deletedIDs.get(0))); //Resets ID field to next free ID
-                //Resets fields
-                cName.setText("");
-                cAddress.setText("");
-                cContactNo.setText("");
-                cEmail.setText("");
-                cBirthdate.setText("");
-                cGender.setSelectedItem("Male");
-
-                //Prints deletedIDs
-                if (deletedIDs.size() > 0) {
-                    System.out.print("\ndeletedIDs : ");
-                    System.out.print(deletedIDs);
-                }
             }
+            Collections.sort(deletedIDs);
+            cId.setText(String.valueOf(deletedIDs.get(0))); //Resets ID field to next free ID
+            //Resets fields
+            cName.setText("");
+            cAddress.setText("");
+            cContactNo.setText("");
+            cEmail.setText("");
+            cBirthdate.setText("");
+            cGender.setSelectedItem("Male");
+            
+            //Prints deletedIDs
+            System.out.print("\ndeletedIDs : ");
+            System.out.print(deletedIDs);
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 

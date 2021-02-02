@@ -5,6 +5,7 @@
  */
 package com.mycompany.programmingexer1;
 
+import java.util.Arrays;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,11 +19,9 @@ import javax.swing.table.DefaultTableModel;
  * @author Admin
  */
 public class CustomerForm extends javax.swing.JFrame {
-    int id = 0; // Number of customers. Global Index variable
-    String[][] cust = new String[10][7]; //Creates a 2d array for item. 10 max customers.
+    int id = 0; //Acts as a counter for the next available ID
+    String[][] cust = new String[10][7]; //Creates a 2d array for containing customer details. Max 10 customers
     ArrayList<Integer> deletedIDs = new ArrayList<Integer>(); //Keep track of deleted ID numbers
-    ArrayList<Integer> dataStore = new ArrayList<Integer>(); //stores all data
-    int index; //row variable
     /**
      * Creates new form CustomerForm
      */
@@ -155,10 +154,7 @@ public class CustomerForm extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "ID", "Name", "Address", "Contact #", "Email", "Birthdate", "Gender"
@@ -301,73 +297,58 @@ public class CustomerForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cGenderActionPerformed
 
-    public Boolean minorChecker = false;
-    public Boolean emailChecker = false;
+    public Boolean minorChecker;
+    public Boolean emailChecker;
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (cName.getText().length() == 0 || cEmail.getText().length() == 0 || cBirthdate.getText().length() == 0 || cAddress.getText().length() == 0 || cContactNo.getText().length() == 0) //check if incomplete
-            messagebox("Incomplete.", "Record");
-        else if (emailChecker == false) { //check if invalid email format
-            messagebox("Invalid email format", "Record");
-        } 
-        else if (minorChecker == false) { //not minor
-            messagebox("Saved!", "Record");
-            id++;
-            cId.setText(String.valueOf(Integer.parseInt(cId.getText())+1));
-        }
-        else if (minorChecker == true) { //minor
-            messagebox("Minors not allowed.", "Record");
-        }
-        
-        DefaultTableModel tblmodel = (DefaultTableModel) jTable1.getModel(); // Gets the table object
-        if (id == 0) {// Check if table is empty
-            tblmodel.setRowCount(0); // Clears/empties table contents
-        }
-        
-        String[] item = {String.valueOf(id), cName.getText(), cAddress.getText(), cContactNo.getText(), cEmail.getText(), cBirthdate.getText(), (String)cGender.getSelectedItem()}; // Gets values from text fields and assigns them to this array
-        tblmodel.addRow(item); // Creates a row for the item array to the table
-        
-        /*try{
-            for(int y = 0; y < 7; y++) { // Assigns the information to the 2d array cust[][], item contains the information of each row
-                cust[id][y] = item[y];
+        if (cName.getText().length() == 0 || cEmail.getText().length() == 0 || cBirthdate.getText().length() == 0 || cAddress.getText().length() == 0 || cContactNo.getText().length() == 0) {//check if incomplete
+            messagebox("Please fill in all the fields.", "Incomplete");
+        } else if (emailChecker == false) { //Check if invalid email format
+            messagebox("Please enter a valid Email.", "Email not valid");
+        } else if (minorChecker == true) { //Check if minor
+            messagebox("Minors are not allowed.", "Minor");
+        } else { //Valid email and not a minor
+            
+            //Gets table object and removes the selected row
+            DefaultTableModel tblmodel = (DefaultTableModel) jTable1.getModel();
+            tblmodel.setRowCount(0); // Clears table
+            
+            int currentID;//Variable containing ID of current customer
+            //Prevents id from incrementing if there is a deleted ID
+            if (deletedIDs.size() == 0) {
+                id++; //increment ID counter
+                cId.setText(String.valueOf(id + 1));
+                currentID = id;
+            } else {
+                //Sets the ID for the customer as deleted ID
+                currentID = deletedIDs.get(0);
+                //Removes deleted ID from deletedIDs
+                deletedIDs.remove(0);
             }
-        }
-        catch (Exception e) {
-            System.out.println("Exception: " + e);
-        }*/
-        
-        //rest is by me
-        try{
-            for(int y = 0; y < 7; y++) { // Assigns the information to the 2d array cust[][], item contains the information of each row
-                cust[id][y] = item[y];
+            
+            //Initialzes item array containing customer details
+            String[] item = {String.valueOf(currentID), cName.getText(), cAddress.getText(), cContactNo.getText(), cEmail.getText(), cBirthdate.getText(), (String)cGender.getSelectedItem()}; // Gets values from text fields and assigns them to this array
+            
+            //Assigns the information to the cust array
+            for (int y = 0; y < 7; y++) { 
+                cust[Integer.valueOf(item[0]) - 1][y] = item[y];
             }
-        }
-        catch (Exception e) {
-            System.out.println("Exception: " + e);
-        }
-        
-        /*
-        if (deletedIDs.size() > 0) {
-            id = deletedIDs.get(0);
-            try {
-                for(int y = 1; y < cust[id].length; y++) { // Assigns the information to the 2d array cust[][], item contains the information of each row
-                    cust[id][y] = item[y];
+            
+            //Adds customers to table
+            for (int i = 0; i < cust.length; i++) {
+                if (cust[i][0] != null) {
+                    tblmodel.addRow(cust[i]);
                 }
             }
-            catch (Exception e) {
-                System.out.println("Note: " + e);
+        
+            //Prints the cust array
+            for (int i = 0; i < cust.length; i++) {
+                if (cust[i][0] != null) {
+                    System.out.println(Arrays.toString(cust[i]));
+                }
             }
-            deletedIDs.remove(0);
-        }*/
-        
-        
-        
-        //for debugging purposes
-        for(int x = 0; x < cust.length; x++) {
-            for(int y = 0; y < cust[0].length; y++) {
-                System.out.print(cust[x][y] + " ");
-            }
-            System.out.print('\n');
+            
+            messagebox("New customer has been added.", "Saved");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -417,7 +398,7 @@ public class CustomerForm extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         cId.setEditable(false);
-        cId.setText("0");
+        cId.setText("1");
     }//GEN-LAST:event_formWindowOpened
 
     private void cContactNoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cContactNoActionPerformed
@@ -429,17 +410,36 @@ public class CustomerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cEmailActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // Deletes selected row
-        DefaultTableModel tblmodel = (DefaultTableModel) jTable1.getModel();
-        //int rowToDelete = jTable1.getSelectedRow() + 1; //variable to store cust row index
-        tblmodel.removeRow(jTable1.getSelectedRow());
-        int IDNo = Integer.parseInt(cId.getText());
-        deletedIDs.add(IDNo);
-        Collections.sort(deletedIDs);
-        if (deletedIDs.size() > 0) {
-            for (int i = 0; i < deletedIDs.size(); i++) {
-            System.out.println(deletedIDs.get(i));
-            }     
+        if (jTable1.getSelectedRow() != -1) { //Checks if a row is selected
+            //Gets table object and removes the selected row
+            DefaultTableModel tblmodel = (DefaultTableModel) jTable1.getModel();
+            tblmodel.removeRow(jTable1.getSelectedRow());
+
+            int IDNo = Integer.parseInt(cId.getText());
+
+            deletedIDs.add(IDNo);
+            
+            for (int y = 0; y < 7; y++) {
+                cust[IDNo - 1][y] = null;
+            }
+            
+            Collections.sort(deletedIDs);
+            cId.setText(String.valueOf(deletedIDs.get(0))); //Resets ID field to next free ID
+            //Resets fields to empty
+            cName.setText("");
+            cAddress.setText("");
+            cContactNo.setText("");
+            cEmail.setText("");
+            cBirthdate.setText("");
+            cGender.setSelectedItem("Male");
+            
+            //Prints deletedIDs
+            if (deletedIDs.size() > 0) {
+                System.out.print("\ndeletedIDs : ");
+                System.out.print(deletedIDs);
+            }
+        } else {
+            messagebox("Cannot delete if a customer is not selected.", "No selection to delete");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -497,7 +497,7 @@ public class CustomerForm extends javax.swing.JFrame {
             }
         }   
         */
-        minorChecker = true;
+        minorChecker = false;
     }//GEN-LAST:event_cBirthdateKeyReleased
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -517,14 +517,13 @@ public class CustomerForm extends javax.swing.JFrame {
         DefaultTableModel tblmodel = (DefaultTableModel) jTable1.getModel();
         int i = jTable1.getSelectedRow();
         if (i >= 0) {
-            tblmodel.setValueAt(cId.getText(), i, 0);
             tblmodel.setValueAt(cName.getText(), i, 1);
             tblmodel.setValueAt(cAddress.getText(), i, 2);
             tblmodel.setValueAt(cContactNo.getText(), i, 3);
             tblmodel.setValueAt(cEmail.getText(), i, 4);
             tblmodel.setValueAt(cBirthdate.getText(), i, 5);
             tblmodel.setValueAt(cGender.getSelectedItem(), i, 6);
-        }   
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
     private void messagebox (String msg, String titlebar) {
         JOptionPane.showMessageDialog(null, msg, titlebar, JOptionPane.INFORMATION_MESSAGE);

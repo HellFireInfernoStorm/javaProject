@@ -22,6 +22,7 @@ public class CustomerForm extends javax.swing.JFrame {
     int id = 0; //Acts as a counter for the next available ID
     String[][] cust = new String[10][7]; //Creates a 2d array for containing customer details. Max 10 customers
     ArrayList<Integer> deletedIDs = new ArrayList<Integer>(); //Keep track of deleted ID numbers
+    Boolean emailChecker, minorChecker;
     /**
      * Creates new form CustomerForm
      */
@@ -297,9 +298,6 @@ public class CustomerForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cGenderActionPerformed
 
-    public Boolean minorChecker;
-    public Boolean emailChecker;
-    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (cName.getText().length() == 0 || cEmail.getText().length() == 0 || cBirthdate.getText().length() == 0 || cAddress.getText().length() == 0 || cContactNo.getText().length() == 0) {//check if incomplete
             messagebox("Please fill in all the fields.", "Incomplete");
@@ -317,7 +315,6 @@ public class CustomerForm extends javax.swing.JFrame {
             //Prevents id from incrementing if there is a deleted ID
             if (deletedIDs.size() == 0) {
                 id++; //increment ID counter
-                cId.setText(String.valueOf(id + 1));
                 currentID = id;
             } else {
                 //Sets the ID for the customer as deleted ID
@@ -348,7 +345,21 @@ public class CustomerForm extends javax.swing.JFrame {
                 }
             }
             
-            messagebox("New customer has been added.", "Saved");
+            //Prepares ID field for next entry based on next free ID;
+            if (deletedIDs.size() == 0) {
+                cId.setText(String.valueOf(id + 1));
+            } else {
+                cId.setText(String.valueOf(deletedIDs.get(0)));
+            }/*
+            //Resets fields
+            cName.setText("");
+            cAddress.setText("");
+            cContactNo.setText("");
+            cEmail.setText("");
+            cBirthdate.setText("");
+            cGender.setSelectedItem("Male");
+            */
+            //messagebox("New customer has been added.", "Saved");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -410,36 +421,36 @@ public class CustomerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cEmailActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if (jTable1.getSelectedRow() != -1) { //Checks if a row is selected
-            //Gets table object and removes the selected row
-            DefaultTableModel tblmodel = (DefaultTableModel) jTable1.getModel();
-            tblmodel.removeRow(jTable1.getSelectedRow());
+        int rows = jTable1.getSelectedRowCount();
+        if (rows > 0) {//Checks if rows are selected
+            DefaultTableModel tblmodel = (DefaultTableModel) jTable1.getModel();//Gets table object
+            for (int i = 0; i < rows; i++) {//Iterates for each selected row
+                int IDNo = Integer.valueOf(String.valueOf(jTable1.getValueAt(jTable1.getSelectedRow(), 0)));//Sets IDNo to ID of current row
+                
+                tblmodel.removeRow(jTable1.getSelectedRow());//Removes the row
+                
+                deletedIDs.add(IDNo);
 
-            int IDNo = Integer.parseInt(cId.getText());
+                for (int y = 0; y < 7; y++) {
+                    cust[IDNo - 1][y] = null;
+                }
 
-            deletedIDs.add(IDNo);
-            
-            for (int y = 0; y < 7; y++) {
-                cust[IDNo - 1][y] = null;
+                Collections.sort(deletedIDs);
+                cId.setText(String.valueOf(deletedIDs.get(0))); //Resets ID field to next free ID
+                //Resets fields
+                cName.setText("");
+                cAddress.setText("");
+                cContactNo.setText("");
+                cEmail.setText("");
+                cBirthdate.setText("");
+                cGender.setSelectedItem("Male");
+
+                //Prints deletedIDs
+                if (deletedIDs.size() > 0) {
+                    System.out.print("\ndeletedIDs : ");
+                    System.out.print(deletedIDs);
+                }
             }
-            
-            Collections.sort(deletedIDs);
-            cId.setText(String.valueOf(deletedIDs.get(0))); //Resets ID field to next free ID
-            //Resets fields to empty
-            cName.setText("");
-            cAddress.setText("");
-            cContactNo.setText("");
-            cEmail.setText("");
-            cBirthdate.setText("");
-            cGender.setSelectedItem("Male");
-            
-            //Prints deletedIDs
-            if (deletedIDs.size() > 0) {
-                System.out.print("\ndeletedIDs : ");
-                System.out.print(deletedIDs);
-            }
-        } else {
-            messagebox("Cannot delete if a customer is not selected.", "No selection to delete");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -501,15 +512,15 @@ public class CustomerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cBirthdateKeyReleased
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        int[] selectRow = jTable1.getSelectedRows(); // array that stores selected row's data
+        int selectRow = jTable1.getSelectedRow(); // array that stores selected row's data
         // Displays the selected row's data to text fields
-        cId.setText(jTable1.getValueAt(selectRow[0], 0).toString());
-        cName.setText(jTable1.getValueAt(selectRow[0], 1).toString());
-        cAddress.setText(jTable1.getValueAt(selectRow[0], 2).toString());
-        cContactNo.setText(jTable1.getValueAt(selectRow[0], 3).toString());
-        cEmail.setText(jTable1.getValueAt(selectRow[0], 4).toString());
-        cBirthdate.setText(jTable1.getValueAt(selectRow[0], 5).toString());
-        cGender.setSelectedItem(jTable1.getValueAt(selectRow[0], 6).toString());
+        cId.setText(jTable1.getValueAt(selectRow, 0).toString());
+        cName.setText(jTable1.getValueAt(selectRow, 1).toString());
+        cAddress.setText(jTable1.getValueAt(selectRow, 2).toString());
+        cContactNo.setText(jTable1.getValueAt(selectRow, 3).toString());
+        cEmail.setText(jTable1.getValueAt(selectRow, 4).toString());
+        cBirthdate.setText(jTable1.getValueAt(selectRow, 5).toString());
+        cGender.setSelectedItem(jTable1.getValueAt(selectRow, 6).toString());
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed

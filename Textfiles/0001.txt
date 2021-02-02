@@ -1,0 +1,10 @@
+Patient ID : 0001
+Name : A. W. M. Dinura Silva
+
+TreatmentNo : 003
+Treatment : X-Ray
+Cost : Rs.555.0
+Date : 17-07-2020
+Time : 01:33:21 PM
+
+Total = Rs.555.0

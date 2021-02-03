@@ -550,16 +550,33 @@ public class CustomerForm extends javax.swing.JFrame {
                 tblmodel.setValueAt(cBirthdate.getText(), i, 5);
                 tblmodel.setValueAt(cGender.getSelectedItem(), i, 6);
                 
-                System.out.println("heyyo");
                 int IDNo = Integer.valueOf(String.valueOf(jTable1.getValueAt(jTable1.getSelectedRow(), 0)));//Sets IDNo to ID of current row
                 //Updates each value of cust array to new value
                 for (int j = 1; j < cust[IDNo].length; j++) {
                     cust[IDNo][j] = jTable1.getValueAt(i, j).toString();
                 }
+                
+                jTable1.clearSelection();//Deselect selected row
+                
+                //Prepares ID field for next entry based on next free ID;
+                if (deletedIDs.size() == 0) {
+                    cId.setText(String.valueOf(id + 1));
+                } else {
+                    cId.setText(String.valueOf(deletedIDs.get(0)));
+                }
+                //Resets fields
+                cName.setText("");
+                cAddress.setText("");
+                cContactNo.setText("");
+                cEmail.setText("");
+                cBirthdate.setText("");
+                cGender.setSelectedItem("Male");
+                
+                messagebox("Customer has been updated successfully", "Update successful");
             }  
-        } else if (jTable1.getSelectedRowCount() > 1) {
+        } else if (jTable1.getSelectedRowCount() > 1) {//If more than 1 row selected
             messagebox("Cannot select more than 1 row to update.", "Select only 1 row");
-        } else {
+        } else {//If no rows selected
             messagebox("Select a row to update.", "Select only a row");
         }
     }//GEN-LAST:event_jButton3ActionPerformed

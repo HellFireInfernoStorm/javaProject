@@ -340,6 +340,7 @@ public class CustomerForm extends javax.swing.JFrame {
         
             //Prints the cust array
             for (int i = 0; i < cust.length; i++) {
+                System.out.println("\n");
                 if (cust[i][0] != null) {
                     System.out.println(Arrays.toString(cust[i]));
                 }
@@ -448,8 +449,15 @@ public class CustomerForm extends javax.swing.JFrame {
             cGender.setSelectedItem("Male");
             
             //Prints deletedIDs
-            System.out.print("\ndeletedIDs : ");
-            System.out.print(deletedIDs);
+            System.out.println("deletedIDs : " + deletedIDs);
+            
+            if (rows == 1) {
+                messagebox("Customer has been deleted.", "Deleted");
+            } else {
+                messagebox(rows + " Customers have been deleted.", "Deleted");
+            }
+        } else {
+            messagebox("Cannot delete customers unless one or more are selected.", "Select a customer to delete");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -511,7 +519,7 @@ public class CustomerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_cBirthdateKeyReleased
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        int selectRow = jTable1.getSelectedRow(); // array that stores selected row's data
+        int selectRow = jTable1.getSelectedRow(); //Row number of selected row
         // Displays the selected row's data to text fields
         cId.setText(jTable1.getValueAt(selectRow, 0).toString());
         cName.setText(jTable1.getValueAt(selectRow, 1).toString());
@@ -523,16 +531,36 @@ public class CustomerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // Update selected row
-        DefaultTableModel tblmodel = (DefaultTableModel) jTable1.getModel();
-        int i = jTable1.getSelectedRow();
-        if (i >= 0) {
-            tblmodel.setValueAt(cName.getText(), i, 1);
-            tblmodel.setValueAt(cAddress.getText(), i, 2);
-            tblmodel.setValueAt(cContactNo.getText(), i, 3);
-            tblmodel.setValueAt(cEmail.getText(), i, 4);
-            tblmodel.setValueAt(cBirthdate.getText(), i, 5);
-            tblmodel.setValueAt(cGender.getSelectedItem(), i, 6);
+        if (jTable1.getSelectedRowCount() == 1) {//Checks if only 1 row is selected
+            if (cName.getText().length() == 0 || cEmail.getText().length() == 0 || cBirthdate.getText().length() == 0 || cAddress.getText().length() == 0 || cContactNo.getText().length() == 0) {//check if incomplete
+                messagebox("Please fill in all the fields.", "Incomplete");
+            } else if (emailChecker == false) { //Check if invalid email format
+                messagebox("Please enter a valid Email.", "Email not valid");
+            } else if (minorChecker == true) { //Check if minor
+                messagebox("Birthday cannot be that of a minor.", "Minor");
+            } else { //Valid email and not a minor
+                DefaultTableModel tblmodel = (DefaultTableModel) jTable1.getModel();//Gets table object
+                int i = jTable1.getSelectedRow();//Row number of selected row
+                
+                //Updates the table row
+                tblmodel.setValueAt(cName.getText(), i, 1);
+                tblmodel.setValueAt(cAddress.getText(), i, 2);
+                tblmodel.setValueAt(cContactNo.getText(), i, 3);
+                tblmodel.setValueAt(cEmail.getText(), i, 4);
+                tblmodel.setValueAt(cBirthdate.getText(), i, 5);
+                tblmodel.setValueAt(cGender.getSelectedItem(), i, 6);
+                
+                System.out.println("heyyo");
+                int IDNo = Integer.valueOf(String.valueOf(jTable1.getValueAt(jTable1.getSelectedRow(), 0)));//Sets IDNo to ID of current row
+                //Updates each value of cust array to new value
+                for (int j = 1; j < cust[IDNo].length; j++) {
+                    cust[IDNo][j] = jTable1.getValueAt(i, j).toString();
+                }
+            }  
+        } else if (jTable1.getSelectedRowCount() > 1) {
+            messagebox("Cannot select more than 1 row to update.", "Select only 1 row");
+        } else {
+            messagebox("Select a row to update.", "Select only a row");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
     private void messagebox (String msg, String titlebar) {
